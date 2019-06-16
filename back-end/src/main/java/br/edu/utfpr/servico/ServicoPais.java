@@ -1,5 +1,6 @@
 package br.edu.utfpr.servico;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -23,7 +24,7 @@ public class ServicoPais {
     private List<PaisDTO> paises;
 
     public ServicoPais() {
-        paises = Stream.of().collect(Collectors.toList());
+        paises = new ArrayList<>();
     }
 
     @GetMapping ("/servicos/paises")
