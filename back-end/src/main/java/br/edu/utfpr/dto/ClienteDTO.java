@@ -20,5 +20,5 @@ public class ClienteDTO {
 
         this.nome = nome;
     }
-    
+
 }
