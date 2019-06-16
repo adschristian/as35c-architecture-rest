@@ -14,13 +14,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class PaisController {
 
-    @GetMapping("/pais")
+    @GetMapping("/paises")
     public String inicial(Model data) throws JsonSyntaxException, UnirestException {
 
         PaisModel arrayPaises[] = new Gson()
                     .fromJson(
                         Unirest
-                            .get("http://localhost:8081/servico/pais")
+                            .get("http://localhost:8081/servicos/paises")
                             .asJson()
                             .getBody()
                             .toString(), 
@@ -32,36 +32,36 @@ public class PaisController {
         return "pais-view";
     }
 
-    @PostMapping ("/pais/criar")
+    @PostMapping ("/paises/criar")
     public String criar(PaisModel pais) throws UnirestException {
 
-            Unirest.post("http://localhost:8081/servico/pais")
+            Unirest.post("http://localhost:8081/servicos/paises")
                 .header("Content-type", "application/json")
                 .header("accept", "application/json")
                 .body(new Gson().toJson(pais, PaisModel.class))
                 .asJson();
 
-        return "redirect:/pais";
+        return "redirect:/paises";
     }
 
-    @GetMapping ("/pais/excluir")
+    @GetMapping ("/paises/excluir")
     public String excluir (@RequestParam int id) throws UnirestException {
 
         Unirest
-            .delete("http://localhost:8081/servico/pais/{id}")
+            .delete("http://localhost:8081/servicos/paises/{id}")
             .routeParam("id", String.valueOf(id))
             .asJson();
 
-        return "redirect:/pais";
+        return "redirect:/paises";
     }
 
-    @GetMapping ("/pais/prepara-alterar")
+    @GetMapping ("/paises/prepara-alterar")
     public String preparaAlterar (@RequestParam int id, Model data) throws JsonSyntaxException, UnirestException {
 
         PaisModel paisExistente = new Gson()
             .fromJson(
                 Unirest
-                    .get("http://localhost:8081/servico/pais/{id}")
+                    .get("http://localhost:8081/servicos/paises/{id}")
                     .routeParam("id", String.valueOf(id))
                     .asJson()
                     .getBody()
@@ -74,7 +74,7 @@ public class PaisController {
         PaisModel arrayPaises[] = new Gson()
         .fromJson(
             Unirest
-                .get("http://localhost:8081/servico/pais")
+                .get("http://localhost:8081/servicos/paises")
                 .asJson()
                 .getBody()
                 .toString(), 
@@ -86,17 +86,17 @@ public class PaisController {
         return "pais-view-alterar";
     }
 
-    @PostMapping ("/pais/alterar")
+    @PostMapping ("/paises/alterar")
     public String alterar (PaisModel paisAlterado) throws UnirestException {
 
         Unirest
-            .put("http://localhost:8081/servico/pais/{id}")
+            .put("http://localhost:8081/servicos/paises/{id}")
             .routeParam("id", String.valueOf(paisAlterado.getId()))
             .header("Content-type", "application/json")
             .header("accept", "application/json")
             .body(new Gson().toJson(paisAlterado, PaisModel.class))
             .asJson();
 
-        return "redirect:/pais";
+        return "redirect:/paises";
     }
 }
