@@ -23,28 +23,22 @@ public class ServicoPais {
     private List<PaisDTO> paises;
 
     public ServicoPais() {
-        paises = Stream.of(
-            PaisDTO.builder().id(1).nome("Brasil").sigla("BR").codigoTelefone(55).build(),
-            PaisDTO.builder().id(2).nome("Estados Unidos da América").sigla("EUA").codigoTelefone(33).build(),
-            PaisDTO.builder().id(3).nome("Reino Unido").sigla("RU").codigoTelefone(44).build()
-        ).collect(Collectors.toList());
+        paises = Stream.of().collect(Collectors.toList());
     }
 
-    @GetMapping ("/servico/pais")
+    @GetMapping ("/servicos/paises")
     public ResponseEntity<List<PaisDTO>> listar() {
-    // public List<PaisDTO> listar() {
-        // return paises;
         return ResponseEntity.ok(paises);
     }
 
-    @GetMapping ("/servico/pais/{id}")
+    @GetMapping ("/servicos/paises/{id}")
     public ResponseEntity<PaisDTO> listarPorId(@PathVariable int id) {
         Optional<PaisDTO> paisEncontrado = paises.stream().filter(p -> p.getId() == id).findAny();
 
         return ResponseEntity.of(paisEncontrado);
     }
 
-    @PostMapping ("/servico/pais")
+    @PostMapping ("/servicos/paises")
     public ResponseEntity<PaisDTO> criar (@RequestBody PaisDTO pais) {
 
         pais.setId(paises.size() + 1);
@@ -53,7 +47,7 @@ public class ServicoPais {
         return ResponseEntity.status(201).body(pais);
     }
 
-    @DeleteMapping ("/servico/pais/{id}")
+    @DeleteMapping ("/servicos/paises/{id}")
     public ResponseEntity excluir (@PathVariable int id) {
         
         if (paises.removeIf(pais -> pais.getId() == id))
@@ -63,7 +57,7 @@ public class ServicoPais {
             return ResponseEntity.notFound().build();
     }
 
-    @PutMapping ("/servico/pais/{id}")
+    @PutMapping ("/servicos/paises/{id}")
     public ResponseEntity<PaisDTO> alterar (@PathVariable int id, @RequestBody PaisDTO pais) {
         Optional<PaisDTO> paisExistente = paises.stream().filter(p -> p.getId() == id).findAny();
 
