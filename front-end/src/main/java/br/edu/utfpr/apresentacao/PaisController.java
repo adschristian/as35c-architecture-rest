@@ -29,7 +29,7 @@ public class PaisController {
 
         data.addAttribute("paises", arrayPaises);
 
-        return "pais-view";
+        return "paises-view";
     }
 
     @PostMapping ("/paises/criar")
@@ -83,7 +83,7 @@ public class PaisController {
 
         data.addAttribute("paises", arrayPaises);
 
-        return "pais-view-alterar";
+        return "paises-view-alterar";
     }
 
     @PostMapping ("/paises/alterar")
