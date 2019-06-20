@@ -10,8 +10,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 @Controller
 public class ClienteController {
+
+    private List<PaisModel> paises;
 
     @GetMapping("/clientes")
     public String inicial(Model data) throws UnirestException, JsonSyntaxException {
@@ -23,13 +29,29 @@ public class ClienteController {
                                 .toString(),
                         ClienteModel[].class
                 );
+
         data.addAttribute("clientes", arrayClientes);
+
+        PaisModel arrayPaises[] = new Gson()
+                .fromJson(
+                        Unirest.get("http://localhost:8081/servicos/paises")
+                                .asJson()
+                                .getBody()
+                                .toString(),
+                        PaisModel[].class
+                );
+
+        this.paises = Stream.of(arrayPaises).collect(Collectors.toList());
+
+        data.addAttribute("paises", this.paises);
 
         return "clientes-view";
     }
 
     @PostMapping("/clientes/criar")
-    public String criar(ClienteModel cliente) throws UnirestException {
+    public String criar(ClienteModel cliente, @RequestParam(value = "paisId") long paisId) throws UnirestException {
+        this.paises.stream().filter(p -> p.getId() == paisId).forEach(cliente::setPais);
+
         Unirest.post("http://localhost:8081/servicos/clientes")
                 .header("Content-type", "application/json")
                 .header("accept", "application/json")
@@ -41,7 +63,7 @@ public class ClienteController {
 
     @GetMapping("/clientes/excluir")
     public String excluir(@RequestParam int id) throws UnirestException {
-        Unirest.delete("http://localhost:8081/servicos/clientes")
+        Unirest.delete("http://localhost:8081/servicos/clientes/{id}")
                 .routeParam("id", String.valueOf(id))
                 .asJson();
 
@@ -60,31 +82,35 @@ public class ClienteController {
                         ClienteModel.class
                 );
 
+
         data.addAttribute("clienteAtual", clienteExistente);
 
-        ClienteModel arrayClientes[] = new Gson()
+        PaisModel arrayPaises[] = new Gson()
                 .fromJson(
-                        Unirest.get("http://localhost:8081/servicos/clientes")
-                        .asJson()
-                        .getBody()
-                        .toString(),
-                        ClienteModel[].class
+                        Unirest.get("http://localhost:8081/servicos/paises")
+                                .asJson()
+                                .getBody()
+                                .toString(),
+                        PaisModel[].class
                 );
 
-        data.addAttribute("clientes", arrayClientes);
+        data.addAttribute("paises", arrayPaises);
 
-        return "redirect:/clientes-view-alterar";
+        return "clientes-view-alterar";
     }
 
-    public String alterar(PaisModel paisAlterado) throws UnirestException {
+    @PostMapping("/clientes/alterar")
+    public String alterar(ClienteModel clienteAlterado, @RequestParam(value = "paisId") long paisId) throws UnirestException {
+        this.paises.stream().filter(p -> p.getId() == paisId).forEach(clienteAlterado::setPais);
+
         Unirest.put("http://localhost:8081/servicos/clientes/{id}")
-                .routeParam("id", String.valueOf(paisAlterado.getId()))
+                .routeParam("id", String.valueOf(clienteAlterado.getId()))
                 .header("Content-type", "application/json")
                 .header("accept", "application/json")
-                .body(new Gson().toJson(paisAlterado, PaisModel.class))
+                .body(new Gson().toJson(clienteAlterado, ClienteModel.class))
                 .asJson();
 
-        return "redirect:/paises";
+        return "redirect:/clientes";
     }
 
 }
